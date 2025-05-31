@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
-import AuthRoutes from './Routes/auth.routes.js';
-import MessageRoutes from './Routes/message.routes.js';
+import AuthRoutes from './routes/auth.routes.js';
+import MessageRoutes from './routes/message.routes.js';
 import { connectDB } from './lib/db.js';
 import {app, server} from './lib/socket.js';
 
@@ -25,7 +25,7 @@ const __dirname = path.resolve();
 const PORT = process.env.PORT
 
 app.use("/api/auth", AuthRoutes);
-app.use("/api/message", MessageRoutes);
+app.use("/api/messages", MessageRoutes);
 
 if(process.env.NODE_ENV === "production"){
     app.use(express.static(path.join(__dirname, "../frontend/dist")));
