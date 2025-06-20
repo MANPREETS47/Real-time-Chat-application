@@ -3,7 +3,8 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
+const BASE_URL =
+  import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -12,51 +13,48 @@ export const useAuthStore = create((set, get) => ({
   isUpdatingProfile: false,
   isCheckingAuth: true,
   onlineUsers: [],
-  socket:null,
+  socket: null,
 
   checkAuth: async () => {
     try {
-        const res = await axiosInstance.get("/auth/checkAuth");
-        set({authUser:res.data})
-        get().connectSocket();
+      const res = await axiosInstance.get("/auth/checkAuth");
+      set({ authUser: res.data });
+      get().connectSocket();
     } catch (error) {
       console.error("Error checking auth:", error);
-    }
-    finally{
-        set({isCheckingAuth:false})  
+    } finally {
+      set({ isCheckingAuth: false });
     }
   },
 
   signup: async (data) => {
     set({ isSigningUp: true });
-    try{
+    try {
       const res = await axiosInstance.post("/auth/signup", data);
-      set({ authUser: res.data});
+      set({ authUser: res.data });
       toast.success("Account created successfully!");
       get().connectSocket();
-    }catch (error) {
+    } catch (error) {
       console.error("Error signing up:", error);
-    }
-    finally {
+    } finally {
       set({ isSigningUp: false });
     }
   },
 
   login: async (data) => {
-    try{
+    try {
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data });
       toast.success("Logged in successfully!");
       get().connectSocket();
-    }catch (error) {
+    } catch (error) {
       console.error("Error logging in:", error);
-    }
-    finally {
+    } finally {
       set({ isLoggingIn: false });
     }
   },
 
-  updatingProfile : async (data) => {
+  updatingProfile: async (data) => {
     set({ isUpdatingProfile: true });
     try {
       const res = await axiosInstance.put("/auth/update", data);
@@ -83,20 +81,20 @@ export const useAuthStore = create((set, get) => ({
 
   connectSocket: () => {
     const { authUser } = get();
-    if(!authUser || get().socket?.connected) return;
+    if (!authUser || get().socket?.connected) return;
     const socket = io(BASE_URL, {
-      query:{
-        userId: authUser._id
-      }
-    })
-    socket.connect()
-    set({ socket:socket})
+      query: {
+        userId: authUser._id,
+      },
+    });
+    socket.connect();
+    set({ socket: socket });
 
-    socket.on("getOnlineUsers", (usersIds) =>{
+    socket.on("getOnlineUsers", (usersIds) => {
       set({ onlineUsers: usersIds });
-    })
+    });
   },
   disconnectSocket: () => {
-    if(get().socket?.connected) get().socket.disconnect();
-  }
+    if (get().socket?.connected) get().socket.disconnect();
+  },
 }));

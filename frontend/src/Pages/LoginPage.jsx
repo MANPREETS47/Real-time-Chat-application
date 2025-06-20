@@ -45,7 +45,7 @@ const LoginPage = () => {
                 <input
                   className="pl-10 py-2 border rounded w-full"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="you@example.com"      
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
