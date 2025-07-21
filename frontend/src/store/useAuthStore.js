@@ -18,6 +18,7 @@ export const useAuthStore = create((set, get) => ({
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/checkAuth");
+      localStorage.setItem("Token", res.data.token);
       set({ authUser: res.data });
       get().connectSocket();
     } catch (error) {
@@ -31,6 +32,7 @@ export const useAuthStore = create((set, get) => ({
     set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
+      localStorage.setItem("Token", res.data.token);
       set({ authUser: res.data });
       toast.success("Account created successfully!");
       get().connectSocket();
@@ -71,6 +73,7 @@ export const useAuthStore = create((set, get) => ({
   logout: async () => {
     try {
       await axiosInstance.post("/auth/logout");
+      localStorage.removeItem("Token");
       set({ authUser: null });
       toast.success("Logged out successfully!");
       get().disconnectSocket();
